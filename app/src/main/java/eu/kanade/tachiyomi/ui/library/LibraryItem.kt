@@ -18,5 +18,7 @@ data class LibraryItem(
         val unreadCount: Long,
         val isLocal: Boolean,
         val sourceLanguage: String,
+        /** Source whose icon to show, null when hidden. */
+        val sourceId: Long?,
     )
 }

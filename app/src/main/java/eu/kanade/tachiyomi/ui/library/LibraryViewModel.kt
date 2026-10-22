@@ -70,6 +70,7 @@ import tachiyomi.domain.manga.interactor.GetLibraryManga
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.domain.manga.model.MangaUpdate
 import tachiyomi.domain.manga.model.applyFilter
+import tachiyomi.domain.source.model.StubSource
 import tachiyomi.domain.source.service.SourceManager
 import tachiyomi.domain.track.interactor.GetTracksPerManga
 import tachiyomi.domain.track.model.Track
@@ -388,6 +389,7 @@ class LibraryViewModel(
             libraryPreferences.localBadge.changes(),
             libraryPreferences.languageBadge.changes(),
             libraryPreferences.autoUpdateMangaRestrictions.changes(),
+            libraryPreferences.sourceBadge.changes(),
 
             preferences.downloadedOnly.changes(),
             libraryPreferences.filterDownloaded.changes(),
@@ -403,13 +405,14 @@ class LibraryViewModel(
                 localBadge = it[2] as Boolean,
                 languageBadge = it[3] as Boolean,
                 skipOutsideReleasePeriod = LibraryPreferences.MANGA_OUTSIDE_RELEASE_PERIOD in (it[4] as Set<*>),
-                globalFilterDownloaded = it[5] as Boolean,
-                filterDownloaded = it[6] as TriState,
-                filterUnread = it[7] as TriState,
-                filterStarted = it[8] as TriState,
-                filterBookmarked = it[9] as TriState,
-                filterCompleted = it[10] as TriState,
-                filterIntervalCustom = it[11] as TriState,
+                sourceBadge = it[5] as Boolean,
+                globalFilterDownloaded = it[6] as Boolean,
+                filterDownloaded = it[7] as TriState,
+                filterUnread = it[8] as TriState,
+                filterStarted = it[9] as TriState,
+                filterBookmarked = it[10] as TriState,
+                filterCompleted = it[11] as TriState,
+                filterIntervalCustom = it[12] as TriState,
             )
         }
     }
@@ -454,6 +457,11 @@ class LibraryViewModel(
                             source.lang
                         } else {
                             ""
+                        },
+                        sourceId = if (preferences.sourceBadge && source !is StubSource && !manga.manga.isLocal()) {
+                            source.id
+                        } else {
+                            null
                         },
                     ),
                 )
@@ -765,6 +773,7 @@ class LibraryViewModel(
         val localBadge: Boolean,
         val languageBadge: Boolean,
         val skipOutsideReleasePeriod: Boolean,
+        val sourceBadge: Boolean,
 
         val globalFilterDownloaded: Boolean,
         val filterDownloaded: TriState,
