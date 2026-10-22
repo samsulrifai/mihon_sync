@@ -134,6 +134,17 @@ class BackupNotifier(
         }
     }
 
+    fun showSyncError(error: String?) {
+        context.cancelNotification(Notifications.ID_RESTORE_PROGRESS)
+
+        with(completeNotificationBuilder) {
+            setContentTitle(context.stringResource(MR.strings.google_drive_sync_error))
+            setContentText(error)
+
+            show(Notifications.ID_RESTORE_COMPLETE)
+        }
+    }
+
     fun showRestoreComplete(
         time: Long,
         errorCount: Int,

@@ -1,10 +1,12 @@
 package eu.kanade.presentation.more.settings.screen
 
+import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -39,6 +41,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.core.net.toUri
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.google.android.gms.auth.api.identity.AuthorizationResult
 import com.hippo.unifile.UniFile
 import eu.kanade.presentation.more.settings.Preference
 import eu.kanade.presentation.more.settings.screen.data.CreateBackupScreen
@@ -60,8 +63,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import logcat.LogPriority
 import mihon.app.di.appGraph
+import mihon.feature.sync.GoogleDriveSyncWorker
 import mihon.icons.materialsymbols.MaterialSymbols
 import mihon.icons.materialsymbols.automirroredrounded.Help
+import tachiyomi.core.common.i18n.pluralStringResource
 import tachiyomi.core.common.i18n.stringResource
 import tachiyomi.core.common.storage.displayablePath
 import tachiyomi.core.common.util.system.logcat
@@ -104,6 +109,7 @@ object SettingsDataScreen : SearchableSettings {
             Preference.PreferenceItem.InfoPreference(stringResource(MR.strings.pref_storage_location_info)),
 
             getBackupAndRestoreGroup(backupPreferences = backupPreferences),
+            getGoogleDriveSyncGroup(),
             getDataGroup(),
             getExportGroup(),
         )
@@ -274,6 +280,140 @@ object SettingsDataScreen : SearchableSettings {
                     stringResource(MR.strings.backup_info) + "\n\n" +
                         stringResource(MR.strings.last_auto_backup_info, relativeTimeSpanString(lastAutoBackup)),
                 ),
+            ),
+        )
+    }
+
+    @Composable
+    private fun getGoogleDriveSyncGroup(): Preference.PreferenceGroup {
+        val context = LocalContext.current
+        val scope = rememberCoroutineScope()
+        val googleDrive = remember { context.appGraph.googleDrive }
+        val preferences = remember { context.appGraph.googleDriveSyncPreferences }
+        val installMissingExtensions = remember { context.appGraph.installMissingExtensions }
+
+        val accountEmail by preferences.accountEmail.collectAsState()
+        val lastSync by preferences.lastSyncTimestamp.collectAsState()
+        val signedIn = accountEmail.isNotEmpty()
+
+        suspend fun completeSignIn(result: AuthorizationResult) {
+            googleDrive.completeSignIn(result)
+            GoogleDriveSyncWorker.setupTask(context)
+            GoogleDriveSyncWorker.startNow(context)
+        }
+
+        fun onSignInError(e: Exception) {
+            if (e is CancellationException) throw e
+            logcat(LogPriority.ERROR, e)
+            context.toast(context.stringResource(MR.strings.google_drive_sign_in_failed, e.message.orEmpty()))
+        }
+
+        val consent = rememberLauncherForActivityResult(
+            ActivityResultContracts.StartIntentSenderForResult(),
+        ) {
+            if (it.resultCode != Activity.RESULT_OK) return@rememberLauncherForActivityResult
+            scope.launch {
+                try {
+                    completeSignIn(googleDrive.getAuthorizationResult(it.data))
+                } catch (e: Exception) {
+                    onSignInError(e)
+                }
+            }
+        }
+
+        return Preference.PreferenceGroup(
+            title = stringResource(MR.strings.google_drive_sync),
+            preferenceItems = listOf(
+                Preference.PreferenceItem.TextPreference(
+                    title = if (signedIn) {
+                        stringResource(MR.strings.google_drive_sign_out)
+                    } else {
+                        stringResource(MR.strings.google_drive_sign_in)
+                    },
+                    subtitle = if (signedIn) {
+                        stringResource(MR.strings.google_drive_signed_in_as, accountEmail)
+                    } else {
+                        stringResource(MR.strings.google_drive_sign_in_summary)
+                    },
+                    onClick = {
+                        scope.launch {
+                            if (signedIn) {
+                                try {
+                                    googleDrive.signOut()
+                                } catch (e: Exception) {
+                                    if (e is CancellationException) throw e
+                                    logcat(LogPriority.ERROR, e)
+                                }
+                                GoogleDriveSyncWorker.setupTask(context)
+                                return@launch
+                            }
+
+                            try {
+                                val result = googleDrive.authorize()
+                                val pendingIntent = result.pendingIntent
+                                if (result.hasResolution() && pendingIntent != null) {
+                                    consent.launch(IntentSenderRequest.Builder(pendingIntent.intentSender).build())
+                                } else {
+                                    completeSignIn(result)
+                                }
+                            } catch (e: Exception) {
+                                onSignInError(e)
+                            }
+                        }
+                    },
+                ),
+                Preference.PreferenceItem.TextPreference(
+                    title = stringResource(MR.strings.google_drive_sync_now),
+                    subtitle = stringResource(MR.strings.google_drive_last_sync, relativeTimeSpanString(lastSync)),
+                    visible = signedIn,
+                    onClick = {
+                        scope.launch {
+                            if (GoogleDriveSyncWorker.isRunning(context)) {
+                                context.toast(MR.strings.google_drive_sync_in_progress)
+                            } else {
+                                GoogleDriveSyncWorker.startNow(context)
+                            }
+                        }
+                    },
+                ),
+                Preference.PreferenceItem.ListPreference(
+                    preference = preferences.syncInterval,
+                    entries = mapOf(
+                        0 to stringResource(MR.strings.off),
+                        6 to stringResource(MR.strings.update_6hour),
+                        12 to stringResource(MR.strings.update_12hour),
+                        24 to stringResource(MR.strings.update_24hour),
+                    ),
+                    title = stringResource(MR.strings.google_drive_sync_interval),
+                    visible = signedIn,
+                    onValueChanged = {
+                        GoogleDriveSyncWorker.setupTask(context, it)
+                        true
+                    },
+                ),
+                Preference.PreferenceItem.TextPreference(
+                    title = stringResource(MR.strings.install_missing_extensions),
+                    subtitle = stringResource(MR.strings.install_missing_extensions_summary),
+                    onClick = {
+                        scope.launch {
+                            try {
+                                val count = withContext(Dispatchers.IO) { installMissingExtensions.await() }
+                                if (count == 0) {
+                                    context.toast(MR.strings.install_missing_extensions_none)
+                                } else {
+                                    context.toast(
+                                        context.pluralStringResource(MR.plurals.install_missing_extensions_started, count, count),
+                                    )
+                                }
+                            } catch (e: Exception) {
+                                if (e is CancellationException) throw e
+                                logcat(LogPriority.ERROR, e)
+                                context.toast(MR.strings.extension_api_error)
+                            }
+                        }
+                    },
+                ),
+                Preference.PreferenceItem.InfoPreference(stringResource(MR.strings.google_drive_sync_info)),
             ),
         )
     }

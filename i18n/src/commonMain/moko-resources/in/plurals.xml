@@ -69,4 +69,7 @@
     <plurals name="notification_update_error">
         <item quantity="other">%1$d update gagal</item>
     </plurals>
+    <plurals name="install_missing_extensions_started">
+        <item quantity="other">Memasang %1$d ekstensi</item>
+    </plurals>
 </resources>

@@ -266,6 +266,10 @@ dependencies {
     implementation(libs.okio)
     implementation(libs.conscrypt) // TLS 1.3 support for Android < 10
 
+    // Google Drive sync
+    implementation(libs.playServices.auth)
+    implementation(libs.kotlinx.coroutines.playServices)
+
     // Data serialization (JSON, protobuf, xml)
     implementation(libs.bundles.serialization)
 

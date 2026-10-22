@@ -114,4 +114,8 @@
         <item quantity="one">%1$d update failed</item>
         <item quantity="other">%1$d updates failed</item>
     </plurals>
+    <plurals name="install_missing_extensions_started">
+        <item quantity="one">Installing %1$d extension</item>
+        <item quantity="other">Installing %1$d extensions</item>
+    </plurals>
 </resources>
