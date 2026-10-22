@@ -1012,6 +1012,8 @@
     <string name="skipped_reason_not_started">Skipped because no chapters are read</string>
     <string name="skipped_reason_not_always_update">Skipped because series does not require updates</string>
     <string name="skipped_reason_not_in_release_period">Skipped because no release was expected today</string>
+    <string name="library_skipped_help">These entries were skipped because of the update restrictions in Settings → Library → Global update. Turn a restriction off to update them anyway.</string>
+    <string name="action_show_skipped_reasons">Tap to see why</string>
 
     <!-- File Picker Titles -->
     <string name="file_select_cover">Select cover image</string>

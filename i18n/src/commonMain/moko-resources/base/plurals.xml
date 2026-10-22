@@ -118,4 +118,8 @@
         <item quantity="one">Installing %1$d extension</item>
         <item quantity="other">Installing %1$d extensions</item>
     </plurals>
+    <plurals name="notification_update_skipped">
+        <item quantity="one">%1$d entry skipped</item>
+        <item quantity="other">%1$d entries skipped</item>
+    </plurals>
 </resources>

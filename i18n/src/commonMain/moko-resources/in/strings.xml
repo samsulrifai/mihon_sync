@@ -678,6 +678,8 @@
     <string name="action_set_interval">Terapkan jeda waktu</string>
     <string name="action_filter_interval_custom">Penyesuaian frekuensi update</string>
     <string name="skipped_reason_not_in_release_period">Dilewati karena tidak ada rilis yang diharapkan hari ini</string>
+    <string name="library_skipped_help">Komik ini dilewati karena pembatasan update di Pengaturan → Pustaka → Pembaruan. Matikan pembatasannya supaya komik ini ikut diperbarui.</string>
+    <string name="action_show_skipped_reasons">Ketuk untuk melihat alasannya</string>
     <string name="action_sort_next_updated">Pembaruan yang diharapkan berikutnya</string>
     <string name="intervals_header">Interval</string>
     <string name="pref_update_only_in_release_period">Prediksikan waktu rilis selanjutnya</string>

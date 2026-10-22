@@ -72,4 +72,7 @@
     <plurals name="install_missing_extensions_started">
         <item quantity="other">Memasang %1$d ekstensi</item>
     </plurals>
+    <plurals name="notification_update_skipped">
+        <item quantity="other">%1$d komik dilewati</item>
+    </plurals>
 </resources>

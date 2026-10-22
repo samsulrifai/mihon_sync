@@ -176,6 +176,26 @@ class LibraryUpdateNotifier(
     }
 
     /**
+     * Shows notification with the number of entries that were skipped with action to open the reasons.
+     *
+     * @param skipped Number of entries that were skipped.
+     * @param uri Uri for the file listing the skipped titles by reason.
+     */
+    fun showSkippedUpdatesNotification(skipped: Int, uri: Uri) {
+        context.notify(
+            Notifications.ID_LIBRARY_SKIPPED,
+            Notifications.CHANNEL_LIBRARY_PROGRESS,
+        ) {
+            setContentTitle(context.pluralStringResource(MR.plurals.notification_update_skipped, skipped, skipped))
+            setContentText(context.stringResource(MR.strings.action_show_skipped_reasons))
+            setSmallIcon(R.drawable.ic_mihon)
+
+            setContentIntent(NotificationReceiver.openErrorLogPendingActivity(context, uri))
+            setAutoCancel(true)
+        }
+    }
+
+    /**
      * Shows the notification containing the result of the update done by the service.
      *
      * @param updates a list of manga with new updates.
