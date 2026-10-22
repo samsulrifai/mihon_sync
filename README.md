@@ -1,68 +1,92 @@
 <div align="center">
 
-<a href="https://mihon.app">
-    <img src="./.github/assets/logo.png" alt="Mihon logo" title="Mihon logo" width="80"/>
-</a>
+<img src="./.github/assets/komik_logo.png" alt="Logo Mihon Sync" title="Logo Mihon Sync" width="80"/>
 
-# Mihon [App](#)
+# Mihon Sync
 
-### Full-featured reader
-Discover and read manga, webtoons, comics, and more – easier than ever on your Android device.
+### Pembaca komik dengan sinkronisasi Google Drive
+Fork dari [Mihon](https://github.com/mihonapp/mihon) yang menambahkan sinkronisasi pustaka dan progres baca antar perangkat lewat akun Google.
 
-[![Discord server](https://img.shields.io/discord/1195734228319617024.svg?label=&labelColor=6A7EC2&color=7389D8&logo=discord&logoColor=FFFFFF)](https://discord.gg/mihon)
-[![GitHub downloads](https://img.shields.io/github/downloads/mihonapp/mihon/total?label=downloads&labelColor=27303D&color=0D1117&logo=github&logoColor=FFFFFF&style=flat)](https://mihon.app/download)
+[![Rilis terbaru](https://img.shields.io/github/v/release/samsulrifai/mihon_sync?label=Rilis&labelColor=27303D&color=FF0510)](https://github.com/samsulrifai/mihon_sync/releases/latest)
+[![CI](https://img.shields.io/github/actions/workflow/status/samsulrifai/mihon_sync/build.yml?labelColor=27303D)](https://github.com/samsulrifai/mihon_sync/actions/workflows/build.yml)
+[![Lisensi: Apache-2.0](https://img.shields.io/github/license/samsulrifai/mihon_sync?labelColor=27303D&color=0877d2)](/LICENSE)
 
-[![CI](https://img.shields.io/github/actions/workflow/status/mihonapp/mihon/build.yml?labelColor=27303D)](https://github.com/mihonapp/mihon/actions/workflows/build_push.yml)
-[![License: Apache-2.0](https://img.shields.io/github/license/mihonapp/mihon?labelColor=27303D&color=0877d2)](/LICENSE)
-[![Translation status](https://img.shields.io/weblate/progress/mihon?labelColor=27303D&color=946300)](https://hosted.weblate.org/engage/mihon/)
+## Unduh
 
-## Download
+Unduh APK dari [halaman rilis](https://github.com/samsulrifai/mihon_sync/releases/latest). Kalau ragu, pilih `mihon-sync-arm64-v8a-….apk`.
 
-[![Mihon Stable](https://img.shields.io/github/release/mihonapp/mihon.svg?maxAge=3600&label=Stable&labelColor=06599d&color=043b69)](https://mihon.app/download)
-[![Mihon Beta](https://img.shields.io/github/v/release/mihonapp/mihon-preview.svg?maxAge=3600&label=Beta&labelColor=2c2c47&color=1c1c39)](https://mihon.app/download)
+*Butuh Android 8.0 atau lebih baru, dan Google Play Services untuk sinkronisasi.*
 
-*Requires Android 8.0 or higher.*
+Mihon Sync terpasang sebagai aplikasi terpisah (`app.mihon.sync`), jadi bisa dipakai berdampingan dengan Mihon asli. Setelah terpasang, aplikasi memberi tahu sendiri kalau ada rilis baru.
 
-## Features
+## Fitur tambahan
 
 <div align="left">
 
-* Local reading of content.
-* A configurable reader with multiple viewers, reading directions and other settings.
-* Tracker support: [MangaBaka](https://mangabaka.org), [MyAnimeList](https://myanimelist.net/), [AniList](https://anilist.co/), [Kitsu](https://kitsu.app/), [MangaUpdates](https://mangaupdates.com), [Shikimori](https://shikimori.one), [Bangumi](https://bgm.tv/), and [Hikka](https://hikka.io/) support.
-* Categories to organize your library.
-* Light and dark themes.
-* Schedule updating your library for new chapters.
-* Create backups locally to read offline or to your desired cloud service.
-* Plus much more...
+Semua fitur Mihon tetap ada, ditambah:
+
+* **Sinkronisasi Google Drive.** Masuk dengan akun Google di *Pengaturan → Data dan penyimpanan* untuk menyinkronkan pustaka, kategori, progres baca, riwayat, tracker, dan repo ekstensi antar perangkat.
+  * Bab yang sudah dibaca di perangkat mana pun dianggap sudah dibaca, dan halaman terakhir yang paling jauh yang dipakai.
+  * Komik yang dihapus dari pustaka di satu perangkat ikut terhapus di perangkat lain.
+  * Sinkron otomatis saat aplikasi dibuka dan ditutup, dan bisa juga terjadwal (tiap 6 jam, 12 jam, atau harian).
+  * Data disimpan di folder aplikasi tersembunyi di Google Drive milikmu sendiri, tanpa server pihak ketiga. Pengaturan aplikasi tidak ikut disinkronkan, jadi tiap perangkat tetap punya pengaturannya sendiri.
+* **Pasang ekstensi yang belum ada.** Setelah sinkron ke perangkat baru, satu ketukan memasang semua ekstensi yang dibutuhkan komik di pustaka.
+* **Ikon sumber di pustaka.** Ikon website komik tampil di sebelah lencana bahasa pada sampul. Bisa dimatikan di menu tampilan pustaka.
+* **Alasan komik dilewati saat refresh.** Setelah refresh manual, notifikasi menunjukkan komik mana yang dilewati dan kenapa, misalnya karena masih ada bab belum dibaca atau komik sudah tamat.
+* **Pembaruan dari GitHub.** Aplikasi memeriksa rilis baru di repo ini.
+* Nama dan logo baru: **Mihon Sync** dengan logo KOMIK.
 
 </div>
 
-## Contributing
+## Build sendiri
 
-[Code of conduct](./CODE_OF_CONDUCT.md) · [Contributing guide](./CONTRIBUTING.md)
+<div align="left">
 
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+Butuh JDK 21 dan Android SDK.
 
-Before reporting a new issue, take a look at the [FAQ](https://mihon.app/docs/faq/general), the [changelog](https://mihon.app/changelogs/) and the already opened [issues](https://github.com/mihonapp/mihon/issues); if you got any questions, join our [Discord server](https://discord.gg/mihon).
+```bash
+./gradlew assembleDebug
+```
 
+Login Google tidak memakai *client secret*. Google mengenali aplikasi dari nama paket dan SHA-1 sertifikat penandatangannya, jadi kalau kamu build dengan kunci sendiri, daftarkan dulu di [Google Cloud Console](https://console.cloud.google.com):
 
-### Repositories
+1. Aktifkan **Google Drive API**.
+2. Atur *OAuth consent screen* dengan tipe *External*. Selama statusnya masih *Testing*, tambahkan akun yang dipakai ke *Test users*.
+3. Buat OAuth client bertipe **Android** untuk setiap kombinasi paket dan kunci yang dipakai:
+   * Debug: `app.mihon.dev` dengan SHA-1 dari `~/.android/debug.keystore`
+   * Rilis: `app.mihon.sync` dengan SHA-1 dari kunci rilis
 
-[![mihonapp/website - GitHub](https://github-stats-extended.vercel.app/api/pin/?username=mihonapp&repo=website&bg_color=161B22&text_color=c9d1d9&title_color=0877d2&icon_color=0877d2&border_radius=8&hide_border=true&description_lines_count=2)](https://github.com/mihonapp/website/)
-[![mihonapp/bitmap.kt - GitHub](https://github-stats-extended.vercel.app/api/pin/?username=mihonapp&repo=bitmap.kt&bg_color=161B22&text_color=c9d1d9&title_color=0877d2&icon_color=0877d2&border_radius=8&hide_border=true&description_lines_count=2)](https://github.com/mihonapp/bitmap.kt/)
+</div>
 
-### Credits
+## Merilis versi baru
 
-Thank you to all the people who have contributed!
+<div align="left">
+
+1. Sekali saja: jalankan `scripts/setup-release-signing.sh`. Skrip ini membuat kunci rilis, menyimpannya sebagai secret GitHub Actions, dan menampilkan SHA-1 untuk Google Cloud. Simpan cadangan keystore dan `keystore.properties` di tempat aman. Tanpa keduanya, pembaruan tidak bisa dipasang di atas versi lama.
+2. Naikkan `versionName` (misalnya `0.21.2-sync.2`) dan `versionCode` di `app/build.gradle.kts`.
+3. Buat tag yang sama dengan versinya, lalu push:
+   ```bash
+   git tag v0.21.2-sync.2 && git push origin v0.21.2-sync.2
+   ```
+   GitHub Actions akan membangun, menandatangani, dan menerbitkan APK ke halaman rilis.
+
+Versi mengikuti versi Mihon yang menjadi dasarnya, ditambah akhiran `-sync.N` untuk rilis fork ini.
+
+</div>
+
+### Kredit
+
+Mihon Sync dibangun di atas [Mihon](https://github.com/mihonapp/mihon). Terima kasih untuk semua kontributor Mihon dan Tachiyomi.
 
 <a href="https://github.com/mihonapp/mihon/graphs/contributors">
-    <img src="https://contrib.rocks/image?repo=mihonapp/mihon" alt="Mihon app contributors" title="Mihon app contributors" width="800"/>
+    <img src="https://contrib.rocks/image?repo=mihonapp/mihon" alt="Kontributor Mihon" title="Kontributor Mihon" width="800"/>
 </a>
 
 ### Disclaimer
 
 The developer(s) of this application does not have any affiliation with the content providers available, and this application hosts zero content.
+
+Mihon Sync is an unofficial fork and is not affiliated with or endorsed by the Mihon Open Source Project. Please report issues with this fork [here](https://github.com/samsulrifai/mihon_sync/issues), not to Mihon.
 
 ### License
 
@@ -82,5 +106,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 </pre>
+
+This fork modifies the original Mihon source code; see the commit history for the changes.
 
 </div>
