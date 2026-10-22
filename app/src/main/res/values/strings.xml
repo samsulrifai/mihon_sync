@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Overrides the launcher label from i18n so this build is told apart from upstream Mihon -->
+    <string name="app_name" translatable="false">Mihon Sync</string>
+</resources>
