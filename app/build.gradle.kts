@@ -37,8 +37,10 @@ android {
     defaultConfig {
         applicationId = "app.mihon"
 
-        versionCode = 38
-        versionName = "0.21.2"
+        // Upstream version with a "-sync.N" suffix for this fork's releases. The code leaves room
+        // for 99 fork releases per upstream version.
+        versionCode = 38_01
+        versionName = "0.21.2-sync.1"
 
         buildConfigField("boolean", "TELEMETRY_INCLUDED", "${Config.includeTelemetry}")
         buildConfigField("boolean", "UPDATER_ENABLED", "${Config.enableUpdater}")
@@ -74,6 +76,8 @@ android {
             isPseudoLocalesEnabled = true
         }
         val release = getByName("release") {
+            // Installs next to upstream Mihon instead of replacing it
+            applicationIdSuffix = ".sync"
             isMinifyEnabled = true
             isShrinkResources = true
 
