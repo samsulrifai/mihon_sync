@@ -88,5 +88,6 @@ jobs:
             mihon-sync-armeabi-v7a-${{ steps.tag.outputs.tag }}.apk
             mihon-sync-x86-${{ steps.tag.outputs.tag }}.apk
             mihon-sync-x86_64-${{ steps.tag.outputs.tag }}.apk
-          draft: false
+          # Published by hand after reviewing the notes, which is also when the app starts offering the update
+          draft: true
           prerelease: false

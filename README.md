@@ -68,7 +68,8 @@ Google sign-in uses no client secret. Google recognizes the app by its package n
    ```bash
    git tag v0.21.2-sync.2 && git push origin v0.21.2-sync.2
    ```
-   GitHub Actions builds, signs and publishes the APKs on the releases page.
+   GitHub Actions builds and signs the APKs and creates a draft release with them.
+4. Review the notes on the [releases page](https://github.com/samsulrifai/mihon_sync/releases) and publish the draft. The app only offers the update once it's published.
 
 Versions follow the Mihon version they're based on, with a `-sync.N` suffix for this fork's releases.
 
