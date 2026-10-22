@@ -63,6 +63,7 @@ import mihon.core.metro.AppCoroutineScope
 import mihon.core.metro.GraphProvider
 import mihon.core.migration.Migration
 import mihon.core.migration.Migrator
+import mihon.feature.sync.GoogleDriveSyncWorker
 import mihon.telemetry.TelemetryConfig
 import org.conscrypt.Conscrypt
 import tachiyomi.core.common.i18n.stringResource
@@ -262,10 +263,12 @@ class App : Application(), DefaultLifecycleObserver, SingletonImageLoader.Factor
 
     override fun onStart(owner: LifecycleOwner) {
         SecureActivityDelegate.onApplicationStart(this)
+        GoogleDriveSyncWorker.onAppVisibilityChanged(this, isVisible = true)
     }
 
     override fun onStop(owner: LifecycleOwner) {
         SecureActivityDelegate.onApplicationStopped(this)
+        GoogleDriveSyncWorker.onAppVisibilityChanged(this, isVisible = false)
     }
 
     override fun getPackageName(): String {

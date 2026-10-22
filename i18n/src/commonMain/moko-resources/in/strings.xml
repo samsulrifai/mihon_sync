@@ -702,6 +702,7 @@
     <string name="google_drive_last_sync">Terakhir disinkronkan: %1$s</string>
     <string name="google_drive_sync_in_progress">Sinkronisasi sedang berjalan</string>
     <string name="google_drive_sync_interval">Sinkronisasi otomatis</string>
+    <string name="google_drive_sync_on_app_start_and_exit">Sinkronkan saat aplikasi dibuka dan ditutup</string>
     <string name="google_drive_sync_error">Sinkronisasi gagal</string>
     <string name="google_drive_sync_info">Pustaka disimpan di folder aplikasi tersembunyi di Google Drive kamu. Pengaturan aplikasi tidak ikut disinkronkan.</string>
     <string name="install_missing_extensions">Pasang ekstensi yang belum ada</string>

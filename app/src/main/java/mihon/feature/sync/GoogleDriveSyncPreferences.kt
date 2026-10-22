@@ -20,6 +20,11 @@ class GoogleDriveSyncPreferences(
 
     val syncInterval: Preference<Int> = preferenceStore.getInt("google_drive_sync_interval", 0)
 
+    val syncOnAppStartAndExit: Preference<Boolean> = preferenceStore.getBoolean(
+        "google_drive_sync_on_app_start_and_exit",
+        true,
+    )
+
     val lastSyncTimestamp: Preference<Long> = preferenceStore.getLong(
         Preference.appStateKey("google_drive_last_sync_timestamp"),
         0L,

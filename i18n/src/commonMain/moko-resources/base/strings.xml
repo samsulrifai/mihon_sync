@@ -668,6 +668,7 @@
     <string name="google_drive_last_sync">Last synced: %1$s</string>
     <string name="google_drive_sync_in_progress">Sync is already running</string>
     <string name="google_drive_sync_interval">Automatic sync</string>
+    <string name="google_drive_sync_on_app_start_and_exit">Sync when opening and leaving the app</string>
     <string name="google_drive_sync_error">Sync failed</string>
     <string name="google_drive_sync_info">The library is stored in a hidden app folder of your Google Drive. App settings are not synced.</string>
     <string name="install_missing_extensions">Install missing extensions</string>

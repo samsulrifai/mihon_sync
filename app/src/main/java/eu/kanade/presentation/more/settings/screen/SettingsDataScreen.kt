@@ -391,6 +391,11 @@ object SettingsDataScreen : SearchableSettings {
                         true
                     },
                 ),
+                Preference.PreferenceItem.SwitchPreference(
+                    preference = preferences.syncOnAppStartAndExit,
+                    title = stringResource(MR.strings.google_drive_sync_on_app_start_and_exit),
+                    visible = signedIn,
+                ),
                 Preference.PreferenceItem.TextPreference(
                     title = stringResource(MR.strings.install_missing_extensions),
                     subtitle = stringResource(MR.strings.install_missing_extensions_summary),
@@ -402,7 +407,11 @@ object SettingsDataScreen : SearchableSettings {
                                     context.toast(MR.strings.install_missing_extensions_none)
                                 } else {
                                     context.toast(
-                                        context.pluralStringResource(MR.plurals.install_missing_extensions_started, count, count),
+                                        context.pluralStringResource(
+                                            MR.plurals.install_missing_extensions_started,
+                                            count,
+                                            count,
+                                        ),
                                     )
                                 }
                             } catch (e: Exception) {

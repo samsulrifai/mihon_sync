@@ -14,6 +14,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import dev.zacsweers.metro.Inject
 import eu.kanade.domain.manga.interactor.UpdateManga
 import eu.kanade.tachiyomi.data.backup.BackupDecoder
@@ -47,6 +48,7 @@ import tachiyomi.i18n.MR
 import java.io.File
 import java.util.concurrent.TimeUnit
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.minutes
 
 /**
  * Syncs the library with Google Drive: the backup there is restored on top of the local library,
@@ -82,11 +84,15 @@ class GoogleDriveSyncWorker(private val context: Context, workerParams: WorkerPa
             return Result.retry()
         }
 
+        val isAutomatic = inputData.getBoolean(IS_AUTOMATIC_KEY, true)
+
         setForegroundSafely()
 
         return try {
             withContext(Dispatchers.IO) { sync() }
             preferences.lastSyncTimestamp.set(Clock.System.now().toEpochMilliseconds())
+            // Syncing in the background shouldn't leave a notification behind every time
+            if (isAutomatic) context.cancelNotification(Notifications.ID_RESTORE_COMPLETE)
             Result.success()
         } catch (e: Exception) {
             if (e is CancellationException) throw e
@@ -163,6 +169,8 @@ class GoogleDriveSyncWorker(private val context: Context, workerParams: WorkerPa
         private val BACKUP_OPTIONS = BackupOptions(appSettings = false, privateSettings = false)
         private val RESTORE_OPTIONS = RestoreOptions(appSettings = false)
 
+        private val MIN_APP_START_INTERVAL = 5.minutes
+
         private fun libraryKey(source: Long, url: String) = "$source:$url"
 
         suspend fun isRunning(context: Context): Boolean {
@@ -195,15 +203,31 @@ class GoogleDriveSyncWorker(private val context: Context, workerParams: WorkerPa
             }
         }
 
-        fun startNow(context: Context) {
+        fun startNow(context: Context, isAutomatic: Boolean = false) {
             val request = OneTimeWorkRequestBuilder<GoogleDriveSyncWorker>()
                 .addTag(TAG_MANUAL)
                 .setConstraints(Constraints(requiredNetworkType = NetworkType.CONNECTED))
+                .setInputData(workDataOf(IS_AUTOMATIC_KEY to isAutomatic))
                 .build()
             context.workManager.enqueueUniqueWork(TAG_MANUAL, ExistingWorkPolicy.KEEP, request)
+        }
+
+        /**
+         * Syncs when the app is left, and when it's opened unless that was synced only just now.
+         */
+        fun onAppVisibilityChanged(context: Context, isVisible: Boolean) {
+            val preferences = context.appGraph.googleDriveSyncPreferences
+            if (preferences.accountEmail.get().isEmpty() || !preferences.syncOnAppStartAndExit.get()) return
+
+            val sinceLastSync = Clock.System.now().toEpochMilliseconds() - preferences.lastSyncTimestamp.get()
+            if (isVisible && sinceLastSync < MIN_APP_START_INTERVAL.inWholeMilliseconds) return
+
+            startNow(context, isAutomatic = true)
         }
     }
 }
 
 private const val TAG_AUTO = "GoogleDriveSync"
 private const val TAG_MANUAL = "$TAG_AUTO:manual"
+
+private const val IS_AUTOMATIC_KEY = "is_automatic" // Boolean
