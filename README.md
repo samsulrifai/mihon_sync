@@ -1,85 +1,85 @@
 <div align="center">
 
-<img src="./.github/assets/komik_logo.png" alt="Logo Mihon Sync" title="Logo Mihon Sync" width="80"/>
+<img src="./.github/assets/komik_logo.png" alt="Mihon Sync logo" title="Mihon Sync logo" width="80"/>
 
 # Mihon Sync
 
-### Pembaca komik dengan sinkronisasi Google Drive
-Fork dari [Mihon](https://github.com/mihonapp/mihon) yang menambahkan sinkronisasi pustaka dan progres baca antar perangkat lewat akun Google.
+### Comic reader with Google Drive sync
+A fork of [Mihon](https://github.com/mihonapp/mihon) that keeps your library and reading progress in sync across devices through your Google account.
 
-[![Rilis terbaru](https://img.shields.io/github/v/release/samsulrifai/mihon_sync?label=Rilis&labelColor=27303D&color=FF0510)](https://github.com/samsulrifai/mihon_sync/releases/latest)
+[![Latest release](https://img.shields.io/github/v/release/samsulrifai/mihon_sync?label=Release&labelColor=27303D&color=FF0510)](https://github.com/samsulrifai/mihon_sync/releases/latest)
 [![CI](https://img.shields.io/github/actions/workflow/status/samsulrifai/mihon_sync/build.yml?labelColor=27303D)](https://github.com/samsulrifai/mihon_sync/actions/workflows/build.yml)
-[![Lisensi: Apache-2.0](https://img.shields.io/github/license/samsulrifai/mihon_sync?labelColor=27303D&color=0877d2)](/LICENSE)
+[![License: Apache-2.0](https://img.shields.io/github/license/samsulrifai/mihon_sync?labelColor=27303D&color=0877d2)](/LICENSE)
 
-## Unduh
+## Download
 
-Unduh APK dari [halaman rilis](https://github.com/samsulrifai/mihon_sync/releases/latest). Kalau ragu, pilih `mihon-sync-arm64-v8a-….apk`.
+Get the APK from the [releases page](https://github.com/samsulrifai/mihon_sync/releases/latest). If you're unsure which one to pick, use `mihon-sync-arm64-v8a-….apk`.
 
-*Butuh Android 8.0 atau lebih baru, dan Google Play Services untuk sinkronisasi.*
+*Requires Android 8.0 or higher, and Google Play services for syncing.*
 
-Mihon Sync terpasang sebagai aplikasi terpisah (`app.mihon.sync`), jadi bisa dipakai berdampingan dengan Mihon asli. Setelah terpasang, aplikasi memberi tahu sendiri kalau ada rilis baru.
+Mihon Sync installs as a separate app (`app.mihon.sync`), so it can be used next to the original Mihon. Once installed, the app lets you know when a new release is out.
 
-## Fitur tambahan
+## What this fork adds
 
 <div align="left">
 
-Semua fitur Mihon tetap ada, ditambah:
+Everything Mihon has, plus:
 
-* **Sinkronisasi Google Drive.** Masuk dengan akun Google di *Pengaturan → Data dan penyimpanan* untuk menyinkronkan pustaka, kategori, progres baca, riwayat, tracker, dan repo ekstensi antar perangkat.
-  * Bab yang sudah dibaca di perangkat mana pun dianggap sudah dibaca, dan halaman terakhir yang paling jauh yang dipakai.
-  * Komik yang dihapus dari pustaka di satu perangkat ikut terhapus di perangkat lain.
-  * Sinkron otomatis saat aplikasi dibuka dan ditutup, dan bisa juga terjadwal (tiap 6 jam, 12 jam, atau harian).
-  * Data disimpan di folder aplikasi tersembunyi di Google Drive milikmu sendiri, tanpa server pihak ketiga. Pengaturan aplikasi tidak ikut disinkronkan, jadi tiap perangkat tetap punya pengaturannya sendiri.
-* **Pasang ekstensi yang belum ada.** Setelah sinkron ke perangkat baru, satu ketukan memasang semua ekstensi yang dibutuhkan komik di pustaka.
-* **Ikon sumber di pustaka.** Ikon website komik tampil di sebelah lencana bahasa pada sampul. Bisa dimatikan di menu tampilan pustaka.
-* **Alasan komik dilewati saat refresh.** Setelah refresh manual, notifikasi menunjukkan komik mana yang dilewati dan kenapa, misalnya karena masih ada bab belum dibaca atau komik sudah tamat.
-* **Pembaruan dari GitHub.** Aplikasi memeriksa rilis baru di repo ini.
-* Nama dan logo baru: **Mihon Sync** dengan logo KOMIK.
+* **Google Drive sync.** Sign in with your Google account in *Settings → Data and storage* to sync your library, categories, reading progress, history, trackers and extension repos between devices.
+  * A chapter read on any device counts as read, and the furthest page read wins.
+  * Entries removed from the library on one device are removed on the others too.
+  * Syncs automatically when the app is opened and left, and optionally on a schedule (every 6 hours, 12 hours or daily).
+  * Data is kept in a hidden app folder of your own Google Drive, with no third-party server. App settings aren't synced, so each device keeps its own.
+* **Install missing extensions.** After syncing to a new device, one tap installs every extension your library needs.
+* **Source icon in the library.** The comic website's icon is shown next to the language badge on covers. It can be turned off in the library display menu.
+* **Why entries were skipped.** After a manual library update, a notification lists the entries that were skipped and why, for example because they have unread chapters or are completed.
+* **Updates from GitHub.** The app checks this repository for new releases.
+* A new name and logo: **Mihon Sync** with the KOMIK logo.
 
 </div>
 
-## Build sendiri
+## Building
 
 <div align="left">
 
-Butuh JDK 21 dan Android SDK.
+Requires JDK 21 and the Android SDK.
 
 ```bash
 ./gradlew assembleDebug
 ```
 
-Login Google tidak memakai *client secret*. Google mengenali aplikasi dari nama paket dan SHA-1 sertifikat penandatangannya, jadi kalau kamu build dengan kunci sendiri, daftarkan dulu di [Google Cloud Console](https://console.cloud.google.com):
+Google sign-in uses no client secret. Google recognizes the app by its package name and the SHA-1 of its signing certificate, so when building with your own key, register it in the [Google Cloud Console](https://console.cloud.google.com) first:
 
-1. Aktifkan **Google Drive API**.
-2. Atur *OAuth consent screen* dengan tipe *External*. Selama statusnya masih *Testing*, tambahkan akun yang dipakai ke *Test users*.
-3. Buat OAuth client bertipe **Android** untuk setiap kombinasi paket dan kunci yang dipakai:
-   * Debug: `app.mihon.dev` dengan SHA-1 dari `~/.android/debug.keystore`
-   * Rilis: `app.mihon.sync` dengan SHA-1 dari kunci rilis
+1. Enable the **Google Drive API**.
+2. Set up the *OAuth consent screen* as *External*. While it's in *Testing*, add the accounts you sign in with as *Test users*.
+3. Create an OAuth client of type **Android** for every package and key combination you use:
+   * Debug: `app.mihon.dev` with the SHA-1 of `~/.android/debug.keystore`
+   * Release: `app.mihon.sync` with the SHA-1 of the release key
 
 </div>
 
-## Merilis versi baru
+## Releasing a new version
 
 <div align="left">
 
-1. Sekali saja: jalankan `scripts/setup-release-signing.sh`. Skrip ini membuat kunci rilis, menyimpannya sebagai secret GitHub Actions, dan menampilkan SHA-1 untuk Google Cloud. Simpan cadangan keystore dan `keystore.properties` di tempat aman. Tanpa keduanya, pembaruan tidak bisa dipasang di atas versi lama.
-2. Naikkan `versionName` (misalnya `0.21.2-sync.2`) dan `versionCode` di `app/build.gradle.kts`.
-3. Buat tag yang sama dengan versinya, lalu push:
+1. Once: run `scripts/setup-release-signing.sh`. It creates the release key, stores it as GitHub Actions secrets and prints the SHA-1 for Google Cloud. Keep a backup of the keystore and `keystore.properties` somewhere safe. Without them, updates can't be installed over existing installs.
+2. Bump `versionName` (for example `0.21.2-sync.2`) and `versionCode` in `app/build.gradle.kts`.
+3. Tag the same version and push the tag:
    ```bash
    git tag v0.21.2-sync.2 && git push origin v0.21.2-sync.2
    ```
-   GitHub Actions akan membangun, menandatangani, dan menerbitkan APK ke halaman rilis.
+   GitHub Actions builds, signs and publishes the APKs on the releases page.
 
-Versi mengikuti versi Mihon yang menjadi dasarnya, ditambah akhiran `-sync.N` untuk rilis fork ini.
+Versions follow the Mihon version they're based on, with a `-sync.N` suffix for this fork's releases.
 
 </div>
 
-### Kredit
+### Credits
 
-Mihon Sync dibangun di atas [Mihon](https://github.com/mihonapp/mihon). Terima kasih untuk semua kontributor Mihon dan Tachiyomi.
+Mihon Sync is built on [Mihon](https://github.com/mihonapp/mihon). Thank you to everyone who has contributed to Mihon and Tachiyomi!
 
 <a href="https://github.com/mihonapp/mihon/graphs/contributors">
-    <img src="https://contrib.rocks/image?repo=mihonapp/mihon" alt="Kontributor Mihon" title="Kontributor Mihon" width="800"/>
+    <img src="https://contrib.rocks/image?repo=mihonapp/mihon" alt="Mihon app contributors" title="Mihon app contributors" width="800"/>
 </a>
 
 ### Disclaimer
