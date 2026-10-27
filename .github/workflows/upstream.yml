@@ -1,0 +1,185 @@
+name: Upstream update
+
+# Opens a pull request merging the latest Mihon release into this fork, with the fork's version
+# bumped to match. Merging stays manual, so every upstream release gets a look before it ships.
+on:
+  schedule:
+    - cron: '0 1 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  update:
+    if: github.repository == 'samsulrifai/mihon_sync'
+    name: Merge latest Mihon release
+    runs-on: 'ubuntu-26.04'
+    env:
+      GH_TOKEN: ${{ github.token }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      # Upstream tags sit on a release branch, so the "Release vX.Y.Z" commit on main is merged instead
+      - name: Find upstream release
+        id: upstream
+        run: |
+          set -e
+          git remote add upstream https://github.com/mihonapp/mihon.git
+          git fetch --no-tags upstream main
+
+          tag=$(gh api repos/mihonapp/mihon/releases/latest --jq .tag_name)
+          commit=$(git log upstream/main --format=%H --grep="^Release $tag\$" -n 1)
+          if [ -z "$commit" ]; then
+            echo "::error::No \"Release $tag\" commit on upstream main"
+            exit 1
+          fi
+
+          branch="upstream/$tag"
+          if git merge-base --is-ancestor "$commit" HEAD; then
+            echo "Already up to date with Mihon $tag"
+          elif git ls-remote --exit-code --heads origin "$branch" > /dev/null; then
+            echo "Branch $branch already exists, waiting for it to be merged"
+          else
+            echo "proceed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+          version=${tag#v}
+          code=$(git show "$commit:app/build.gradle.kts" | grep -oP 'versionCode = \K\d+')
+          {
+            echo "tag=$tag"
+            echo "commit=$commit"
+            echo "branch=$branch"
+            echo "version=$version-sync.1"
+            echo "code=${code}_01"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Merge
+        id: merge
+        if: steps.upstream.outputs.proceed == 'true'
+        env:
+          TAG: ${{ steps.upstream.outputs.tag }}
+          COMMIT: ${{ steps.upstream.outputs.commit }}
+          BRANCH: ${{ steps.upstream.outputs.branch }}
+          VERSION: ${{ steps.upstream.outputs.version }}
+          CODE: ${{ steps.upstream.outputs.code }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git merge --no-ff --no-commit "$COMMIT" || true
+
+          # Upstream bumps the version in these on every release, the fork keeps its own
+          for file in $(git diff --name-only --diff-filter=U); do
+            case "$file" in
+              .github/ISSUE_TEMPLATE/*|README.md)
+                git checkout --ours -- "$file"
+                git add "$file"
+                ;;
+            esac
+          done
+
+          # Takes the fork's side of conflicts over the version, then sets the version for this release
+          python3 - <<'EOF'
+          import os, re
+          path = 'app/build.gradle.kts'
+          text = open(path).read()
+          def resolve(match):
+              ours = match.group(1)
+              return ours if 'versionCode' in ours or 'versionName' in ours else match.group(0)
+          text = re.sub(r'<<<<<<< [^\n]*\n(.*?)=======\n.*?>>>>>>> [^\n]*\n', resolve, text, flags=re.S)
+          text = re.sub(r'versionCode = [\d_]+', f"versionCode = {os.environ['CODE']}", text, count=1)
+          text = re.sub(r'versionName = "[^"]+"', f'versionName = "{os.environ["VERSION"]}"', text, count=1)
+          open(path, 'w').write(text)
+          EOF
+          if ! grep -q '^<<<<<<< ' app/build.gradle.kts; then
+            git add app/build.gradle.kts
+          fi
+
+          conflicts=$(git diff --name-only --diff-filter=U)
+          if [ -n "$conflicts" ]; then
+            git merge --abort
+            {
+              echo "conflicts<<EOF"
+              echo "$conflicts"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git commit -q -m "Merge upstream Mihon $TAG"
+          echo "merged=true" >> "$GITHUB_OUTPUT"
+
+      - name: Report conflicts
+        if: steps.merge.outputs.conflicts != ''
+        env:
+          TAG: ${{ steps.upstream.outputs.tag }}
+          CONFLICTS: ${{ steps.merge.outputs.conflicts }}
+        run: |
+          title="Mihon $TAG needs a manual merge"
+          if gh issue list --state open --search "\"$title\" in:title" --json number --jq '.[].number' | grep -q .; then
+            echo "Issue already open"
+            exit 0
+          fi
+          files=$(echo "$CONFLICTS" | sed 's/^/- `/; s/$/`/')
+          gh issue create --title "$title" --body "$(printf '%s\n\n%s\n\n%s\n' \
+            "[Mihon $TAG](https://github.com/mihonapp/mihon/releases/tag/$TAG) is out, but merging it conflicts with this fork's changes in:" \
+            "$files" \
+            "Merge the \`Release $TAG\` commit from upstream \`main\` by hand and resolve these.")"
+
+      - name: Set up JDK
+        if: steps.merge.outputs.merged == 'true'
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          java-version-file: .github/.java-version
+          distribution: temurin
+
+      - name: Set up Gradle
+        if: steps.merge.outputs.merged == 'true'
+        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
+        with:
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+
+      # Pull requests opened with the workflow token don't start other workflows, so the checks run here
+      - name: Check, test and build
+        id: checks
+        if: steps.merge.outputs.merged == 'true'
+        continue-on-error: true
+        run: ./gradlew spotlessCheck testDebugUnitTest assembleRelease -Pdist=ci -Pinclude-telemetry=false
+
+      - name: Open pull request
+        if: steps.merge.outputs.merged == 'true'
+        env:
+          TAG: ${{ steps.upstream.outputs.tag }}
+          BRANCH: ${{ steps.upstream.outputs.branch }}
+          VERSION: ${{ steps.upstream.outputs.version }}
+          CHECKS: ${{ steps.checks.outcome }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          git push origin "$BRANCH"
+
+          if [ "$CHECKS" = success ]; then
+            checks="✅ Code format, unit tests and the release build passed."
+          else
+            checks="❌ Code format, unit tests or the release build failed, see [the run]($RUN_URL)."
+          fi
+          body=$(printf '%s\n\n%s\n\n%s\n' \
+            "Merges [Mihon $TAG](https://github.com/mihonapp/mihon/releases/tag/$TAG) and sets the version to \`$VERSION\`." \
+            "$checks" \
+            "After merging, release it by pushing the tag \`v$VERSION\`.")
+
+          if ! gh pr create --base main --head "$BRANCH" --title "Merge upstream Mihon $TAG" --body "$body"; then
+            # Creating pull requests needs "Allow GitHub Actions to create and approve pull requests"
+            gh issue create --title "Merge upstream Mihon $TAG" \
+              --body "$(printf '%s\n\n%s\n' "$body" "Open the pull request: ${{ github.server_url }}/${{ github.repository }}/compare/main...$BRANCH?expand=1")"
+          fi
