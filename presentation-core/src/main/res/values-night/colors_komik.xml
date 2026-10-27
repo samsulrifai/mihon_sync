@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Colors for KOMIK theme, matching the Mihon Sync logo
+  ~
+  ~ Key colors:
+  ~ Primary #FF0510
+  ~ Tertiary #705C2E
+-->
+<resources>
+    <color name="komik_primary">#FFB4AB</color>
+    <color name="komik_onPrimary">#690005</color>
+    <color name="komik_primaryContainer">#C00010</color>
+    <color name="komik_onPrimaryContainer">#FFFFFF</color>
+    <color name="komik_secondary">#FF5449</color>
+    <color name="komik_onSecondary">#410002</color>
+    <color name="komik_secondaryContainer">#93000A</color>
+    <color name="komik_onSecondaryContainer">#FFDAD6</color>
+    <color name="komik_tertiary">#DFC38C</color>
+    <color name="komik_onTertiary">#3E2E04</color>
+    <color name="komik_tertiaryContainer">#574419</color>
+    <color name="komik_onTertiaryContainer">#FCDFA6</color>
+    <color name="komik_error">#FFB4AB</color>
+    <color name="komik_onError">#690005</color>
+    <color name="komik_errorContainer">#93000A</color>
+    <color name="komik_onErrorContainer">#FFDAD6</color>
+    <color name="komik_background">#1A1111</color>
+    <color name="komik_onBackground">#F1DEDC</color>
+    <color name="komik_surface">#1A1111</color>
+    <color name="komik_onSurface">#F1DEDC</color>
+    <color name="komik_surfaceVariant">#271D1C</color>
+    <color name="komik_onSurfaceVariant">#D8C2BF</color>
+    <color name="komik_outline">#A08C8A</color>
+    <color name="komik_outlineVariant">#534341</color>
+    <color name="komik_scrim">#000000</color>
+    <color name="komik_inverseSurface">#F1DEDC</color>
+    <color name="komik_inverseOnSurface">#392E2D</color>
+    <color name="komik_inversePrimary">#C00010</color>
+    <color name="komik_surfaceDim">#1A1111</color>
+    <color name="komik_surfaceBright">#423736</color>
+    <color name="komik_surfaceContainerLowest">#140C0B</color>
+    <color name="komik_surfaceContainerLow">#231918</color>
+    <color name="komik_surfaceContainer">#271D1C</color>
+    <color name="komik_surfaceContainerHigh">#322827</color>
+    <color name="komik_surfaceContainerHighest">#3D3231</color>
+</resources>

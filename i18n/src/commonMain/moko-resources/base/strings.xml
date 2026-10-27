@@ -234,6 +234,7 @@
     <string name="theme_dark">Dark</string>
     <string name="theme_monet">Dynamic</string>
     <string name="theme_catppuccin">Catppuccin</string>
+    <string name="theme_komik" translatable="false">KOMIK</string>
     <string name="theme_tokyonight">Tokyo Night</string>
     <string name="theme_greenapple">Green Apple</string>
     <string name="theme_lavender">Lavender</string>

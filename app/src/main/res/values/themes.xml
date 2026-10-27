@@ -91,6 +91,46 @@
     <!-- Monet theme only support S+ -->
     <style name="Theme.Tachiyomi.Monet" />
 
+    <!--== KOMIK Theme ==-->
+    <style name="Theme.Tachiyomi.Komik">
+        <!-- Theme Colors -->
+        <item name="colorPrimary">@color/komik_primary</item>
+        <item name="colorOnPrimary">@color/komik_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/komik_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/komik_onPrimaryContainer</item>
+        <item name="colorPrimaryInverse">@color/komik_inversePrimary</item>
+        <item name="colorSecondary">@color/komik_secondary</item>
+        <item name="colorOnSecondary">@color/komik_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/komik_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/komik_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/komik_tertiary</item>
+        <item name="colorOnTertiary">@color/komik_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/komik_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/komik_onTertiaryContainer</item>
+        <item name="android:colorBackground">@color/komik_background</item>
+        <item name="colorOnBackground">@color/komik_onBackground</item>
+        <item name="colorSurface">@color/komik_surface</item>
+        <item name="colorOnSurface">@color/komik_onSurface</item>
+        <item name="colorSurfaceVariant">@color/komik_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/komik_onSurfaceVariant</item>
+        <item name="colorSurfaceInverse">@color/komik_inverseSurface</item>
+        <item name="colorOnSurfaceInverse">@color/komik_inverseOnSurface</item>
+        <item name="colorError">@color/komik_error</item>
+        <item name="colorOnError">@color/komik_onError</item>
+        <item name="colorErrorContainer">@color/komik_errorContainer</item>
+        <item name="colorOnErrorContainer">@color/komik_onErrorContainer</item>
+        <item name="colorOutline">@color/komik_outline</item>
+        <item name="colorOutlineVariant">@color/komik_outlineVariant</item>
+        <item name="scrimBackground">@color/komik_scrim</item>
+        <item name="colorSurfaceBright">@color/komik_surfaceBright</item>
+        <item name="colorSurfaceDim">@color/komik_surfaceDim</item>
+        <item name="colorSurfaceContainer">@color/komik_surfaceContainer</item>
+        <item name="colorSurfaceContainerHigh">@color/komik_surfaceContainerHigh</item>
+        <item name="colorSurfaceContainerHighest">@color/komik_surfaceContainerHighest</item>
+        <item name="colorSurfaceContainerLow">@color/komik_surfaceContainerLow</item>
+        <item name="colorSurfaceContainerLowest">@color/komik_surfaceContainerLowest</item>
+    </style>
+
     <!--== Catppuccin Theme ==-->
     <style name="Theme.Tachiyomi.Catppuccin">
         <!-- Theme Colors -->
