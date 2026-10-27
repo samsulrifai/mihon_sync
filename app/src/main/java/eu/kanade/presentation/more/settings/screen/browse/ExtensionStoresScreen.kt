@@ -15,6 +15,7 @@ import eu.kanade.presentation.more.settings.screen.browse.components.ExtensionSt
 import eu.kanade.presentation.util.Screen
 import eu.kanade.tachiyomi.util.system.copyToClipboard
 import eu.kanade.tachiyomi.util.system.openInBrowser
+import mihon.feature.extensionstore.SUGGESTED_EXTENSION_STORE_URL
 import tachiyomi.presentation.core.screens.LoadingScreen
 
 class ExtensionStoresScreen(
@@ -43,6 +44,7 @@ class ExtensionStoresScreen(
         ExtensionStoresScreen(
             state = successState,
             onClickCreate = { viewModel.showDialog(ExtensionStoreDialog.Create()) },
+            onClickAddSuggested = { viewModel.addFromDeeplink(SUGGESTED_EXTENSION_STORE_URL) },
             onCopy = { context.copyToClipboard(it.indexUrl, it.indexUrl) },
             onOpenWebsite = { it.contact.website.let(context::openInBrowser) },
             onOpenDiscord = { it.contact.discord?.let(context::openInBrowser) },

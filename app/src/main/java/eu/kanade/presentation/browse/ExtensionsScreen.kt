@@ -53,7 +53,9 @@ import eu.kanade.tachiyomi.util.system.LocaleHelper
 import eu.kanade.tachiyomi.util.system.copyToClipboard
 import eu.kanade.tachiyomi.util.system.launchRequestPackageInstallsPermission
 import mihon.domain.extension.model.ExtensionStore
+import mihon.feature.extensionstore.SUGGESTED_EXTENSION_STORE_URL
 import mihon.icons.materialsymbols.MaterialSymbols
+import mihon.icons.materialsymbols.rounded.Add
 import mihon.icons.materialsymbols.rounded.Close
 import mihon.icons.materialsymbols.rounded.Download
 import mihon.icons.materialsymbols.rounded.Info
@@ -108,7 +110,12 @@ fun ExtensionScreen(
                 EmptyScreen(
                     stringRes = msg,
                     modifier = Modifier.padding(contentPadding),
-                    actions = listOf(
+                    actions = listOfNotNull(
+                        EmptyScreenAction(
+                            stringRes = MR.strings.action_add_suggested_extension_store,
+                            icon = MaterialSymbols.Rounded.Add,
+                            onClick = { navigator.push(ExtensionStoresScreen(url = SUGGESTED_EXTENSION_STORE_URL)) },
+                        ).takeIf { searchQuery.isNullOrEmpty() },
                         EmptyScreenAction(
                             stringRes = MR.strings.extensionStores,
                             icon = MaterialSymbols.Rounded.Settings,

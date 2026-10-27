@@ -890,6 +890,7 @@
     <string name="action_filter_excluded_scanlators">Filter yang mengecualikan pemindai</string>
     <string name="label_support_us">Dukung Kami</string>
     <string name="extensionStores">Tempat ekstensi</string>
+    <string name="action_add_suggested_extension_store">Tambah repo yang disarankan</string>
     <string name="action.addExtensionStore">Tambah toko ekstensi</string>
     <string name="extensionStoresScreen.emptyLabel">Anda belum menambahkan ekstensi</string>
     <string name="extensionStoresScreen.addStore.title">Tambah ekstensi</string>
