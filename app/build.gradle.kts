@@ -39,8 +39,8 @@ android {
 
         // Upstream version with a "-sync.N" suffix for this fork's releases. The code leaves room
         // for 99 fork releases per upstream version.
-        versionCode = 39_01
-        versionName = "0.21.3-sync.1"
+        versionCode = 39_02
+        versionName = "0.21.3-sync.2"
 
         buildConfigField("boolean", "TELEMETRY_INCLUDED", "${Config.includeTelemetry}")
         buildConfigField("boolean", "UPDATER_ENABLED", "${Config.enableUpdater}")
